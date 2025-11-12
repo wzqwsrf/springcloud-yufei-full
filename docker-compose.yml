@@ -1,0 +1,16 @@
+version: '3'
+services:
+  eureka:
+    image: openjdk:17
+    container_name: demo-eureka
+    ports:
+      - 8761:8761
+  config:
+    image: openjdk:17
+    container_name: demo-config
+    ports:
+      - 8888:8888
+  zipkin:
+    image: openzipkin/zipkin:2.23.2
+    ports:
+      - 9411:9411

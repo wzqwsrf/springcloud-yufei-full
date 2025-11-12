@@ -1,0 +1,50 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: service-a
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# Resilience4j config (example)
+resilience4j:
+  circuitbreaker:
+    instances:
+      # 为调用 Service B 的接口配置熔断实例（名称自定义，需与代码中对应）
+      service-b:
+        slidingWindowSize: 1  # 滑动窗口大小（统计最近10个请求）
+        failureRateThreshold: 1  # 失败率阈值（超过50%触发熔断）
+        waitDurationInOpenState: 10000  # 熔断打开后，等待10秒再尝试关闭
+        permittedNumberOfCallsInHalfOpenState: 3  # 半开状态下允许的测试请求数
+  timelimiter:
+    instances:
+      # 超时配置（与熔断实例关联）
+      service-b:
+        timeoutDuration: 3000  # 调用超时时间（3秒）
+
+feign:
+  circuitbreaker:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+
+
+logging:
+  level:
+    # Resilience4j 核心包日志（熔断、重试等）
+    io.github.resilience4j: DEBUG
+    # Spring Cloud 熔断工厂日志（关键：确认 Resilience4j 是否被加载）
+    org.springframework.cloud.circuitbreaker.resilience4j: DEBUG
+    # Spring AOP 日志（可选：排查代理问题）
+    org.springframework.aop: DEBUG
