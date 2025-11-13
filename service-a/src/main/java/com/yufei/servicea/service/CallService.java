@@ -2,6 +2,7 @@ package com.yufei.servicea.service;
 
 import com.yufei.servicea.feign.ServiceBClient;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class CallService {
     private ServiceBClient client;
 
     @CircuitBreaker(name = "service-b", fallbackMethod = "fallbackHello")
+    @RateLimiter(name = "service-b", fallbackMethod = "fallbackHello")
     public String call(String name) {
         return client.hello(name); // Feign 调用
 //        throw new RuntimeException("手动抛出异常，模拟调用失败");

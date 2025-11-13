@@ -17,8 +17,8 @@ resilience4j:
     instances:
       # 为调用 Service B 的接口配置熔断实例（名称自定义，需与代码中对应）
       service-b:
-        slidingWindowSize: 1  # 滑动窗口大小（统计最近10个请求）
-        failureRateThreshold: 1  # 失败率阈值（超过50%触发熔断）
+        slidingWindowSize: 10  # 滑动窗口大小（统计最近10个请求）
+        failureRateThreshold: 50  # 失败率阈值（超过50%触发熔断）
         waitDurationInOpenState: 10000  # 熔断打开后，等待10秒再尝试关闭
         permittedNumberOfCallsInHalfOpenState: 3  # 半开状态下允许的测试请求数
   timelimiter:
@@ -26,6 +26,12 @@ resilience4j:
       # 超时配置（与熔断实例关联）
       service-b:
         timeoutDuration: 3000  # 调用超时时间（3秒）
+  ratelimiter:
+    instances:
+      service-b:
+        limitForPeriod: 5        # 每个时间段允许的调用次数
+        limitRefreshPeriod: 1s   # 时间段长度
+        timeoutDuration: 0       # 超时等待时间（0 表示立即拒绝）
 
 feign:
   circuitbreaker:
