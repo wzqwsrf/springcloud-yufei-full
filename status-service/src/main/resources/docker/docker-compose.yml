@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+
+  # ---------------------
+  #  MySQL 8
+  # ---------------------
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # ---------------------
+  #  Redis
+  # ---------------------
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - redis_data:/data
+
+  # ---------------------
+  # bitnamilegacy/kafka 核心配置
+  # ---------------------
+
+#  kafka:
+#    image: apache/kafka:3.8.1
+#    container_name: kafka
+#    environment:
+#      # 启用 KRaft 模式
+#      KAFKA_KRAFT_MODE: "true"
+#      KAFKA_NODE_ID: 1
+#      KAFKA_PROCESS_ROLES: "broker,controller"
+#
+#      # broker 监听
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+#
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+#
+#      # controller 端口
+#      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+#
+#      # controller quorum
+#      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@localhost:9093"
+#
+#      # 日志目录
+#      KAFKA_LOG_DIRS: "/kafka-logs"
+#    ports:
+#      - "9092:9092"
+#      - "9093:9093"
+#    volumes:
+#      - kafka_data:/kafka-logs
+
+
+# 数据卷：持久化服务数据（独立于容器，安全可靠）
+volumes:
+  mysql_data:
+  redis_data:
+  kafka_data:

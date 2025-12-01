@@ -1,0 +1,62 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: status-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+  datasource:
+    url: jdbc:mysql://localhost:3306/app?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    redis:
+      host: localhost
+      port: 6379
+
+    kafka:
+      bootstrap-servers: localhost:9092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# Resilience4j config (example)
+resilience4j:
+  circuitbreaker:
+    instances:
+      # 为调用 Service B 的接口配置熔断实例（名称自定义，需与代码中对应）
+      service-b:
+        slidingWindowSize: 10  # 滑动窗口大小（统计最近10个请求）
+        failureRateThreshold: 50  # 失败率阈值（超过50%触发熔断）
+        waitDurationInOpenState: 10000  # 熔断打开后，等待10秒再尝试关闭
+        permittedNumberOfCallsInHalfOpenState: 3  # 半开状态下允许的测试请求数
+  timelimiter:
+    instances:
+      # 超时配置（与熔断实例关联）
+      service-b:
+        timeoutDuration: 3000  # 调用超时时间（3秒）
+  ratelimiter:
+    instances:
+      service-b:
+        limitForPeriod: 5        # 每个时间段允许的调用次数
+        limitRefreshPeriod: 1s   # 时间段长度
+        timeoutDuration: 0       # 超时等待时间（0 表示立即拒绝）
+
+feign:
+  circuitbreaker:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+logging:
+  level:
+    org.springframework.beans.factory.support: DEBUG
+    com.baomidou: DEBUG
