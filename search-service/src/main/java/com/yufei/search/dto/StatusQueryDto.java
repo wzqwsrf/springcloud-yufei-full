@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.Getter;
 
 /**
  * @author wangzhenqing
@@ -11,6 +12,7 @@ import lombok.Data;
  * @description 小红书搜索
  */
 @Data
+@Getter
 public class StatusQueryDto {
 
     @NotBlank(message = "查询参数不能为空！")

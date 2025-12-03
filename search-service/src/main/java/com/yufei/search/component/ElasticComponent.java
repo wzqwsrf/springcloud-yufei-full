@@ -1,6 +1,8 @@
 package com.yufei.search.component;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
@@ -48,6 +50,28 @@ public class ElasticComponent {
         responseDto.setTotal(totalNum);
         responseDto.setData(list);
         return responseDto;
+    }
+
+    /**
+     * 通用写入 ES
+     *
+     * @param indexName ES 索引名
+     * @param document  要写入的对象
+     * @param id        文档 ID（可选，如果为 null 则 ES 自动生成）
+     * @param <T>       文档类型
+     * @return 写入结果（文档ID）
+     */
+    public <T> IndexResponse insert(String indexName, T document, String id) {
+        try {
+            IndexRequest<T> request = IndexRequest.of(index->index.index(indexName).document(document).id(id));
+
+            IndexResponse response = searchClient.index(request);
+            log.info("Indexed document. index={}, id={}, result={}", indexName, response.id(), response.result());
+            return response;
+        } catch (Exception e) {
+            log.error("ES insert exception for index={}", indexName, e);
+            return null;
+        }
     }
 
 }
