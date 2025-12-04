@@ -1,10 +1,10 @@
 # ? Spring Cloud 2023.x 微服务治理 社区内容与搜索Demo
 
-这是一个基于 **Spring Boot 3.3.x** 和 **JDK 17** 的最小可运行 Spring Cloud 2023.x 服务治理 Demo。它展示了微服务组件的集成与协作。
+这是一个基于 **Spring Boot 3.3.x** 和 **JDK 17** 的最小可运行 Spring Cloud 2023.x 服务治理项目，展示了微服务组件的集成与协作。
 希望能做一个完整的社区内容与搜索微服务示例，帮助大家理解 Spring Cloud 在实际项目中的应用。
 ---
 
-## ? 核心服务组件
+## 核心服务组件
 
 该 Demo 模拟了一个包含社区内容和搜索功能的微服务系统，包括以下 **5 个核心服务**：
 
@@ -16,7 +16,7 @@
 
 ---
 
-## ? 关键技术亮点
+## 关键技术亮点
 
 * **服务调用:** 使用 **Spring Cloud OpenFeign** 进行声明式 REST 调用。
 * **弹性与容错:** 集成 **Resilience4j** 实现服务的熔断 (Circuit Breaker)、限流和降级。
@@ -25,19 +25,20 @@
 
 ---
 
-## ?? 项目结构
+## 项目结构
 
 ---
 
-## ?? 启动顺序 (推荐)
+## 启动顺序 (推荐)
 
 为了确保服务依赖关系正确，请按以下顺序启动应用：
 
-1.  启动 **Config Server**（默认端口 `8888`）
-2.  启动 **service-b**（默认端口 `8081`）
-3.  启动 **status-service**（假设端口 `8082`）
-4.  启动 **search-service**（假设端口 `8083`）
-5.  启动 **service-a**（默认端口 `8080`）
+1. 启动 **Config Server**（默认端口 `8888`）
+2. 启动 **Eureka Server**（默认端口 `8761`）
+3. 启动 **Gateway**（默认端口 `8080`）
+4. 启动 **status-service**（端口 `8081`）
+5. 启动 **search-service**（端口 `8082`）
+
 
 ---
 
@@ -48,19 +49,20 @@
 
 ---
 
-## ? 依赖版本
+## 依赖版本
 
-| 组件               | 版本             | 备注 |
-|:-----------------|:---------------| :--- |
-| **Java Version** | **JDK 17**     | 长期支持版本 (LTS) |
-| Spring Boot      | 3.3.6          | |
-| Spring Cloud     | 2023.0.4       | |
-| Resilience4j     | 2.1.0          | |
-| ElasticSearch    | 8.12.2         | |
+| 组件            | 版本       | 备注 |
+|:--------------|:---------| :--- |
+| Java Versio   | JDK 17   | 长期支持版本 (LTS) |
+| Spring Boot   | 3.3.6    | |
+| Spring Cloud  | 2023.0.4 | |
+| Resilience4j  | 2.1.0    | |
+| ElasticSearch | 8.12.2   | |
+ | MySQL         | 8.0      | |
 
 ---
 
-## ? 参考资料
+## 参考资料
 
 * [Spring Cloud Config 官方文档](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/)
 * [Resilience4j 官方文档](https://resilience4j.readme.io/)
@@ -68,7 +70,7 @@
 
 ## 其他
 
-* 写帖子
+* 写内容
 ```bash
   curl -X POST "http://localhost:8081/status/create" \
   -H "Content-Type: application/json" \
