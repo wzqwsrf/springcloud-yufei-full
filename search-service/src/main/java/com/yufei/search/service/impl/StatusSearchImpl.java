@@ -51,7 +51,7 @@ public class StatusSearchImpl implements IStatusSearch {
         Query query = getBoolQuery(queryDto);
         List<SortOptions> sortOptionsList = new ArrayList<>();
         sortOptionsList.add(SortOptions.of(f -> f.field(FieldSort.of(fn -> fn.field(CREATE_TIME).order(SortOrder.Desc)))));
-        List<String> sourceList = List.of("id", "title", "content", "create_time", "author");
+        List<String> sourceList = List.of("id", "title", "content", "create_time", "user_id");
         int start = (queryDto.getPage() - 1) * queryDto.getSize();
         SearchRequest searchRequest = SearchRequest.of(b -> b.query(query)
                 .index(INDEX_NAME)

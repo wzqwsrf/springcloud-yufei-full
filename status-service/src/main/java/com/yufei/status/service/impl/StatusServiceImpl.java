@@ -65,7 +65,7 @@ public class StatusServiceImpl implements StatusService {
         String key = LIKE_KEY + id;
         Boolean added = redisTemplate.opsForSet().add(key, userId.toString()) > 0;
         if (Boolean.TRUE.equals(added)) {
-//            statusMapper.increaseLike(id); // XML 中写 update like_count = like_count + 1
+            statusMapper.increaseLike(id);
         }
     }
 }

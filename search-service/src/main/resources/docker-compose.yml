@@ -3,6 +3,7 @@ version: '3.8'
 services:
   elasticsearch:
     image: elasticsearch:8.12.2 # 推荐使用特定版本，保持稳定
+    build: .
     container_name: elasticsearch
     environment:
       # ⚠️ 1. 禁用安全功能 (开发环境推荐，避免复杂的证书和密码配置)
@@ -15,6 +16,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       # 5. 允许单节点集群名称
       - cluster.name=es-cluster
+
     ulimits:
       # 内存锁定配置，防止内存交换，提高性能
       memlock:

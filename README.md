@@ -1,4 +1,4 @@
-# ? Spring Cloud 2023.x 微服务治理 社区内容与搜索Demo
+# Spring Cloud 2023.x 微服务治理 社区内容与搜索Demo
 
 这是一个基于 **Spring Boot 3.3.x** 和 **JDK 17** 的最小可运行 Spring Cloud 2023.x 服务治理项目，展示了微服务组件的集成与协作。
 希望能做一个完整的社区内容与搜索微服务示例，帮助大家理解 Spring Cloud 在实际项目中的应用。
@@ -42,7 +42,7 @@
 
 ---
 
-## ?? 配置说明
+## 配置说明
 
 * **Config Server** 默认使用 **native** 模式，本地读取 `classpath:/config` 目录下的配置文件。
 * 所有客户端服务启动时，会请求 Config Server 的 URL：`http://localhost:8888/application/default`

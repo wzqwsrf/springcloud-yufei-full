@@ -1,4 +1,4 @@
-package com.yufei.search;
+package com.yufei.search.controller;
 
 import com.yufei.search.dto.StatusQueryDto;
 import com.yufei.search.service.IStatusSearch;
