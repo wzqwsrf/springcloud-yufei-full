@@ -40,7 +40,7 @@ public class StatusSearchImpl implements IStatusSearch {
     private ObjectMapper objectMapper;
 
     private static final String INDEX_NAME = "status";
-    private static final String CREATE_TIME = "create_time";
+    private static final String CREATE_TIME = "created_at";
 
     @Resource
     private IEsIkTokenService esIkTokenService;
@@ -52,7 +52,7 @@ public class StatusSearchImpl implements IStatusSearch {
         Query query = getBoolQuery(queryDto);
         List<SortOptions> sortOptionsList = new ArrayList<>();
         sortOptionsList.add(SortOptions.of(f -> f.field(FieldSort.of(fn -> fn.field(CREATE_TIME).order(SortOrder.Desc)))));
-        List<String> sourceList = List.of("id", "title", "content", "create_time", "user_id");
+        List<String> sourceList = List.of("id", "title", "content", "created_at", "user_id");
         int start = (queryDto.getPage() - 1) * queryDto.getSize();
         SearchRequest searchRequest = SearchRequest.of(b -> b.query(query)
                 .index(INDEX_NAME)
@@ -80,7 +80,7 @@ public class StatusSearchImpl implements IStatusSearch {
     }
 
     /**
-     * »ù´¡query
+     * ï¿½ï¿½ï¿½ï¿½query
      *
      * @param requestDto
      * @return
@@ -106,14 +106,14 @@ public class StatusSearchImpl implements IStatusSearch {
     }
 
     /**
-     * ¼àÌý Kafka ÏûÏ¢£º½ÓÊÕ 'status-topic' µÄÏûÏ¢£¬²¢½«Êý¾ÝÐ´Èë Elasticsearch¡£
-     * * @param statusJsonMessage Kafka ½ÓÊÕµ½µÄ JSON ×Ö·û´®ÏûÏ¢
+     * ï¿½ï¿½ï¿½ï¿½ Kafka ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 'status-topic' ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ Elasticsearchï¿½ï¿½
+     * * @param statusJsonMessage Kafka ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ JSON ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
      */
     @KafkaListener(topics = {"status-created-topic"}, groupId = "status-index-group")
     public void consumeAndIndexStatus(String statusJsonMessage) {
         StatusIndexDocument statusDocument = null;
         try {
-            // 1. ·´ÐòÁÐ»¯£º½« JSON ×Ö·û´®×ª»»Îª Java ¶ÔÏó
+            // 1. ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ JSON ï¿½Ö·ï¿½ï¿½ï¿½×ªï¿½ï¿½Îª Java ï¿½ï¿½ï¿½ï¿½
             statusDocument = objectMapper.readValue(statusJsonMessage, StatusIndexDocument.class);
 
             if (statusDocument.getId() == null) {
@@ -123,7 +123,7 @@ public class StatusSearchImpl implements IStatusSearch {
 
             log.info("Received status message: {}", JSON.toJSONString(statusDocument));
 
-            // 2. Ë÷ÒýÊý¾Ý£º½« Java ¶ÔÏóË÷Òýµ½ Elasticsearch
+            // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ Java ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Elasticsearch
             IndexResponse response = elasticComponent.insert(INDEX_NAME,statusDocument,
                     String.valueOf(statusDocument.getId()));
 
@@ -131,7 +131,7 @@ public class StatusSearchImpl implements IStatusSearch {
                     statusDocument.getId(), response.result());
 
         } catch (Exception e) {
-            // 3. ´íÎó´¦Àí£º¼ÇÂ¼´íÎó£¬²¢¼ÌÐø´¦ÀíÏÂÒ»ÌõÏûÏ¢ (±ÜÃâ Consumer ¹ÒÆð)
+            // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ó£¬²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ï¢ (ï¿½ï¿½ï¿½ï¿½ Consumer ï¿½ï¿½ï¿½ï¿½)
             log.error("Failed to process Kafka message or index to ES. Message: {}", statusJsonMessage, e);
         }
     }
