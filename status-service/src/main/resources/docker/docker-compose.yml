@@ -69,3 +69,5 @@ volumes:
   mysql_data:
   redis_data:
   kafka_data:
+  zk_data:
+  zk_logs:

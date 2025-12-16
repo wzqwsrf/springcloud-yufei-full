@@ -25,15 +25,32 @@ public class StatusIndexDocument {
     private Long userId;
     private String title;
     private String content;
-    @JsonProperty("share_count")
-    private long shareCount;
-    @JsonProperty("comment_count")
-    private long commentCount;
-    @JsonProperty("liked_count")
-    private long likedCount;
-    @JsonProperty("collected_count")
-    private long collectedCount;
-    @JsonProperty("create_time")
-    private String createTime;
+    /**
+     * 点赞数
+     */
+    @JsonProperty("retweet_count")
+    private Long retweetCount;
+
+    /**
+     * 点赞数
+     */
+    @JsonProperty("fav_count")
+    private Long favCount;
+
+    /**
+     * 点赞数
+     */
+    @JsonProperty("like_count")
+    private Long likeCount;
+
+    /**
+     * 点赞数
+     */
+    @JsonProperty("reply_count")
+    private Long replyCount;
+    @JsonProperty("created_at")
+    private Long createdAt;
+    @JsonProperty("updated_at")
+    private Long updatedAt;
 
 }

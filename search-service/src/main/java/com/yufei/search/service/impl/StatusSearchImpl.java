@@ -9,6 +9,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yufei.search.component.ElasticComponent;
 import com.yufei.search.dto.ResponseDto;
@@ -38,7 +39,7 @@ public class StatusSearchImpl implements IStatusSearch {
     @Resource
     private ObjectMapper objectMapper;
 
-    private static final String INDEX_NAME = "status_index";
+    private static final String INDEX_NAME = "status";
     private static final String CREATE_TIME = "create_time";
 
     @Resource
@@ -108,7 +109,7 @@ public class StatusSearchImpl implements IStatusSearch {
      * 监听 Kafka 消息：接收 'status-topic' 的消息，并将数据写入 Elasticsearch。
      * * @param statusJsonMessage Kafka 接收到的 JSON 字符串消息
      */
-    @KafkaListener(topics = "status-created-topic", groupId = "status-index-group")
+    @KafkaListener(topics = {"status-created-topic"}, groupId = "status-index-group")
     public void consumeAndIndexStatus(String statusJsonMessage) {
         StatusIndexDocument statusDocument = null;
         try {
@@ -119,6 +120,8 @@ public class StatusSearchImpl implements IStatusSearch {
                 log.warn("Received status message is incomplete. Skipping: {}", statusJsonMessage);
                 return;
             }
+
+            log.info("Received status message: {}", JSON.toJSONString(statusDocument));
 
             // 2. 索引数据：将 Java 对象索引到 Elasticsearch
             IndexResponse response = elasticComponent.insert(INDEX_NAME,statusDocument,

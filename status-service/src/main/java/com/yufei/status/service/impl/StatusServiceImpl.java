@@ -41,7 +41,7 @@ public class StatusServiceImpl implements StatusService {
         status.setContent(request.getContent());
         status.setId(snowflake.nextId());
         status.setLikeCount(0L);
-        status.setCreateTime(System.currentTimeMillis());
+        status.setCreatedAt(System.currentTimeMillis());
 
         statusMapper.insert(status);
 
