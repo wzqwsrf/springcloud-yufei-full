@@ -1,7 +1,7 @@
 package com.yufei.search.controller;
 
 import com.yufei.search.dto.StatusQueryDto;
-import com.yufei.search.service.IStatusSearch;
+import com.yufei.search.service.IStatusSearchService;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/status")
 public class StatusSearchController {
     @Resource
-    private IStatusSearch statusSearch;
+    private IStatusSearchService statusSearch;
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     @ResponseBody

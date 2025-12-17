@@ -1,6 +1,7 @@
 package com.yufei.search.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yufei.search.annotation.ParamsAnnotation;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -18,8 +19,10 @@ public class StatusQueryDto {
     @NotBlank(message = "查询参数不能为空！")
     private String query;
     @Max(value = 10)
+    @ParamsAnnotation(defaultValue = "1")
     private int page;            //起始页
     @Max(value = 1000)
+    @ParamsAnnotation(defaultValue = "10")
     @JsonProperty("page_size")
     private int size;            //每页个数
     @JsonProperty("trace_id")

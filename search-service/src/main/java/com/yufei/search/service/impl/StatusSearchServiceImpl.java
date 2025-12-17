@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.FieldSort;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
@@ -17,7 +18,7 @@ import com.yufei.search.dto.StatusIndexDocument;
 import com.yufei.search.dto.StatusQueryDto;
 import com.yufei.search.dto.StatusSearchResult;
 import com.yufei.search.es.IEsIkTokenService;
-import com.yufei.search.service.IStatusSearch;
+import com.yufei.search.service.IStatusSearchService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -34,7 +35,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class StatusSearchImpl implements IStatusSearch {
+public class StatusSearchServiceImpl implements IStatusSearchService {
 
     @Resource
     private ObjectMapper objectMapper;
@@ -49,7 +50,7 @@ public class StatusSearchImpl implements IStatusSearch {
 
     @Override
     public Object search(StatusQueryDto queryDto) {
-        Query query = getBoolQuery(queryDto);
+        Query query = getMatchBoolQuery(queryDto);
         List<SortOptions> sortOptionsList = new ArrayList<>();
         sortOptionsList.add(SortOptions.of(f -> f.field(FieldSort.of(fn -> fn.field(CREATE_TIME).order(SortOrder.Desc)))));
         List<String> sourceList = List.of("id", "title", "content", "created_at", "user_id");
@@ -57,7 +58,7 @@ public class StatusSearchImpl implements IStatusSearch {
         SearchRequest searchRequest = SearchRequest.of(b -> b.query(query)
                 .index(INDEX_NAME)
                 .from(start)
-                .size(queryDto.getPage()).sort(sortOptionsList).
+                .size(queryDto.getSize()).sort(sortOptionsList).
                 source(SourceConfig.of(s -> s.filter(f -> f.includes(sourceList)))));
         log.info("searchRequest:{}", searchRequest);
         StopWatch stopWatch = new StopWatch("status search");
@@ -105,15 +106,50 @@ public class StatusSearchImpl implements IStatusSearch {
         return BoolQuery.of(f -> f.filter(filterList))._toQuery();
     }
 
+
     /**
-     * ���� Kafka ��Ϣ������ 'status-topic' ����Ϣ����������д�� Elasticsearch��
+     * getMatchBoolQuery
+     *
+     * @param requestDto
+     * @return
+     */
+    public Query getMatchBoolQuery(StatusQueryDto requestDto) {
+        String query = requestDto.getQuery();
+
+        List<String> wordList = esIkTokenService.getIkSmartTokenList(query);
+        List<Query> titleMustList = new ArrayList<>();
+        List<Query> contentMustList = new ArrayList<>();
+
+        for (String partQ : wordList) {
+            titleMustList.add(TermQuery.of(t -> t.field("title").value(partQ))._toQuery());
+            contentMustList.add(TermQuery.of(t -> t.field("content").value(partQ))._toQuery());
+        }
+
+        List<Query> filterList = new ArrayList<>();
+        List<Query> shouldList = new ArrayList<>();
+        shouldList.add(MatchQuery.of(mp -> mp
+                        .field("title")
+                        .query(query)
+                        .boost(2.0f)
+                )
+                ._toQuery());
+        shouldList.add(MatchQuery.of(mp -> mp
+                        .field("content")
+                        .query(query)
+                        .boost(2.0f)
+                )
+                ._toQuery());
+        filterList.add(BoolQuery.of(b -> b.should(shouldList).minimumShouldMatch("1"))._toQuery());
+        return BoolQuery.of(f -> f.filter(filterList))._toQuery();
+    }
+
+    /**
      * * @param statusJsonMessage Kafka ���յ��� JSON �ַ�����Ϣ
      */
     @KafkaListener(topics = {"status-created-topic"}, groupId = "status-index-group")
     public void consumeAndIndexStatus(String statusJsonMessage) {
         StatusIndexDocument statusDocument = null;
         try {
-            // 1. �����л����� JSON �ַ���ת��Ϊ Java ����
             statusDocument = objectMapper.readValue(statusJsonMessage, StatusIndexDocument.class);
 
             if (statusDocument.getId() == null) {
@@ -123,7 +159,6 @@ public class StatusSearchImpl implements IStatusSearch {
 
             log.info("Received status message: {}", JSON.toJSONString(statusDocument));
 
-            // 2. �������ݣ��� Java ���������� Elasticsearch
             IndexResponse response = elasticComponent.insert(INDEX_NAME,statusDocument,
                     String.valueOf(statusDocument.getId()));
 
@@ -131,7 +166,6 @@ public class StatusSearchImpl implements IStatusSearch {
                     statusDocument.getId(), response.result());
 
         } catch (Exception e) {
-            // 3. ��������¼���󣬲�����������һ����Ϣ (���� Consumer ����)
             log.error("Failed to process Kafka message or index to ES. Message: {}", statusJsonMessage, e);
         }
     }

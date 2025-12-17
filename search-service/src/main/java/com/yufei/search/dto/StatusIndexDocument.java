@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * @author wangzhenqing
  * @date 2023/12/11 16:12
@@ -23,6 +25,12 @@ public class StatusIndexDocument {
     private Long id;
     @JsonProperty("user_id")
     private Long userId;
+
+    @JsonProperty("title_list")
+    private List<String> titleList;
+    @JsonProperty("content_list")
+    private List<String> contentList;
+
     private String title;
     private String content;
     /**

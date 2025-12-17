@@ -7,6 +7,6 @@ import com.yufei.search.dto.StatusQueryDto;
  * @date 2025/12/02 11:53
  * @description
  */
-public interface IStatusSearch {
+public interface IStatusSearchService {
     Object search(StatusQueryDto queryDto);
 }
