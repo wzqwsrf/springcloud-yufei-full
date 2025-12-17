@@ -1,86 +1,97 @@
-# Spring Cloud 2023.x Î¢·şÎñÖÎÀí ÉçÇøÄÚÈİÓëËÑË÷Demo
+# Spring Cloud 2023.x å¾®æœåŠ¡æ²»ç† ç¤¾åŒºå†…å®¹ä¸æœç´¢Demo
 
-ÕâÊÇÒ»¸ö»ùÓÚ **Spring Boot 3.3.x** ºÍ **JDK 17** µÄ×îĞ¡¿ÉÔËĞĞ Spring Cloud 2023.x ·şÎñÖÎÀíÏîÄ¿£¬Õ¹Ê¾ÁËÎ¢·şÎñ×é¼şµÄ¼¯³ÉÓëĞ­×÷¡£
-Ï£ÍûÄÜ×öÒ»¸öÍêÕûµÄÉçÇøÄÚÈİÓëËÑË÷Î¢·şÎñÊ¾Àı£¬°ïÖú´ó¼ÒÀí½â Spring Cloud ÔÚÊµ¼ÊÏîÄ¿ÖĞµÄÓ¦ÓÃ¡£
+è¿™æ˜¯ä¸€ä¸ªåŸºäº **Spring Boot 3.3.x** å’Œ **JDK 17** çš„æœ€å°å¯è¿è¡Œ Spring Cloud 2023.x æœåŠ¡æ²»ç†é¡¹ç›®ï¼Œå±•ç¤ºäº†å¾®æœåŠ¡ç»„ä»¶çš„é›†æˆä¸åä½œã€‚
+ç›®å‰è¯¥é¡¹ç›®å·²ç»å®ç°äº†å¯ä»¥å†™å…¥å†…å®¹å­˜å‚¨åˆ°MySQLï¼Œå¹¶ä¸”é€šè¿‡kafkaå‘é€åˆ°esåŒæ­¥å†™å…¥ï¼Œä»¥åŠæ”¯æŒesæŸ¥è¯¢ã€‚
 ---
 
-## ºËĞÄ·şÎñ×é¼ş
+## æ ¸å¿ƒæœåŠ¡ç»„ä»¶
 
-¸Ã Demo Ä£ÄâÁËÒ»¸ö°üº¬ÉçÇøÄÚÈİºÍËÑË÷¹¦ÄÜµÄÎ¢·şÎñÏµÍ³£¬°üÀ¨ÒÔÏÂ **5 ¸öºËĞÄ·şÎñ**£º
+è¯¥ Demo æ¨¡æ‹Ÿäº†ä¸€ä¸ªåŒ…å«ç¤¾åŒºå†…å®¹å’Œæœç´¢åŠŸèƒ½çš„å¾®æœåŠ¡ç³»ç»Ÿï¼ŒåŒ…æ‹¬ä»¥ä¸‹ **5 ä¸ªæ ¸å¿ƒæœåŠ¡**ï¼š
 
-* **config-server** (`8888`): **ÅäÖÃÖĞĞÄ**£¬²ÉÓÃ±¾µØ native Ä£Ê½£¬ÓÃÓÚ¼¯ÖĞ¹ÜÀíËùÓĞ¿Í»§¶ËµÄÅäÖÃ¡£
-* **service-a** (`8080`): **Íø¹Ø/µ÷ÓÃ¶ËÄ£Äâ·şÎñ**£¬¸ºÔğ¶ÁÈ¡ÅäÖÃ²¢µ÷ÓÃ `service-b`¡£
-* **service-b** (`8081`): **»ù´¡±»µ÷ÓÃ·şÎñ**£¬Ìá¹©»ù´¡ API¡£
-* **status-service** (`8082`): **ÉçÇøÄÚÈİ·şÎñ**£¬´¦ÀíÓÃ»§×´Ì¬£¨Status/Post£©µÄ´´½¨¡¢¸üĞÂÓë´æ´¢£¨ÈçÍ¨¹ı Kafka/DB£©¡£
-* **search-service** (`8083`): **ËÑË÷·şÎñ**£¬Õë¶Ô `status-service` µÄÄÚÈİÌá¹©¸ßĞÔÄÜµÄËÑË÷¡¢Ë÷ÒıºÍ¾ÛºÏ¹¦ÄÜ¡£
-
----
-
-## ¹Ø¼ü¼¼ÊõÁÁµã
-
-* **·şÎñµ÷ÓÃ:** Ê¹ÓÃ **Spring Cloud OpenFeign** ½øĞĞÉùÃ÷Ê½ REST µ÷ÓÃ¡£
-* **µ¯ĞÔÓëÈİ´í:** ¼¯³É **Resilience4j** ÊµÏÖ·şÎñµÄÈÛ¶Ï (Circuit Breaker)¡¢ÏŞÁ÷ºÍ½µ¼¶¡£
-* **ÅäÖÃ¹ÜÀí:** Ê¹ÓÃ **Config Server** ÊµÏÖ¼¯ÖĞÊ½ÅäÖÃ¡£
-* **¶¯Ì¬Ë¢ĞÂ:** ÅäÖÃ¶¯Ì¬Ë¢ĞÂÊ¾Àı£¨`@RefreshScope` + `/actuator/refresh`£©¡£
+* **config-server** (`8888`): **é…ç½®ä¸­å¿ƒ**ï¼Œé‡‡ç”¨æœ¬åœ° native æ¨¡å¼ï¼Œç”¨äºé›†ä¸­ç®¡ç†æ‰€æœ‰å®¢æˆ·ç«¯çš„é…ç½®ã€‚
+* **service-a** (`8080`): **ç½‘å…³/è°ƒç”¨ç«¯æ¨¡æ‹ŸæœåŠ¡**ï¼Œè´Ÿè´£è¯»å–é…ç½®å¹¶è°ƒç”¨ `service-b`ã€‚
+* **service-b** (`8081`): **åŸºç¡€è¢«è°ƒç”¨æœåŠ¡**ï¼Œæä¾›åŸºç¡€ APIã€‚
+* **status-service** (`8082`): **ç¤¾åŒºå†…å®¹æœåŠ¡**ï¼Œå¤„ç†ç”¨æˆ·çŠ¶æ€ï¼ˆStatus/Postï¼‰çš„åˆ›å»ºã€æ›´æ–°ä¸å­˜å‚¨ï¼ˆå¦‚é€šè¿‡ Kafka/DBï¼‰ã€‚
+* **search-service** (`8083`): **æœç´¢æœåŠ¡**ï¼Œé’ˆå¯¹ `status-service` çš„å†…å®¹æä¾›é«˜æ€§èƒ½çš„æœç´¢ã€ç´¢å¼•å’ŒèšåˆåŠŸèƒ½ã€‚
 
 ---
 
-## ÏîÄ¿½á¹¹
+## å…³é”®æŠ€æœ¯äº®ç‚¹
+
+* **æœåŠ¡è°ƒç”¨:** ä½¿ç”¨ **Spring Cloud OpenFeign** è¿›è¡Œå£°æ˜å¼ REST è°ƒç”¨ã€‚
+* **å¼¹æ€§ä¸å®¹é”™:** é›†æˆ **Resilience4j** å®ç°æœåŠ¡çš„ç†”æ–­ (Circuit Breaker)ã€é™æµå’Œé™çº§ã€‚
+* **é…ç½®ç®¡ç†:** ä½¿ç”¨ **Config Server** å®ç°é›†ä¸­å¼é…ç½®ã€‚
+* **åŠ¨æ€åˆ·æ–°:** é…ç½®åŠ¨æ€åˆ·æ–°ç¤ºä¾‹ï¼ˆ`@RefreshScope` + `/actuator/refresh`ï¼‰ã€‚
 
 ---
 
-## Æô¶¯Ë³Ğò (ÍÆ¼ö)
+## é¡¹ç›®ç»“æ„
 
-ÎªÁËÈ·±£·şÎñÒÀÀµ¹ØÏµÕıÈ·£¬Çë°´ÒÔÏÂË³ĞòÆô¶¯Ó¦ÓÃ£º
+---
 
-1. Æô¶¯ **Config Server**£¨Ä¬ÈÏ¶Ë¿Ú `8888`£©
-2. Æô¶¯ **Eureka Server**£¨Ä¬ÈÏ¶Ë¿Ú `8761`£©
-3. Æô¶¯ **Gateway**£¨Ä¬ÈÏ¶Ë¿Ú `8080`£©
-4. Æô¶¯ **status-service**£¨¶Ë¿Ú `8081`£©
-5. Æô¶¯ **search-service**£¨¶Ë¿Ú `8082`£©
+## å¯åŠ¨é¡ºåº (æ¨è)
+
+ä¸ºäº†ç¡®ä¿æœåŠ¡ä¾èµ–å…³ç³»æ­£ç¡®ï¼Œè¯·æŒ‰ä»¥ä¸‹é¡ºåºå¯åŠ¨åº”ç”¨ï¼š
+
+1. å¯åŠ¨ **Config Server**ï¼ˆé»˜è®¤ç«¯å£ `8888`ï¼‰
+2. å¯åŠ¨ **Eureka Server**ï¼ˆé»˜è®¤ç«¯å£ `8761`ï¼‰
+3. å¯åŠ¨ **Gateway**ï¼ˆé»˜è®¤ç«¯å£ `8080`ï¼‰
+4. å¯åŠ¨ **status-service**ï¼ˆç«¯å£ `8081`ï¼‰
+5. å¯åŠ¨ **search-service**ï¼ˆç«¯å£ `8082`ï¼‰
 
 
 ---
 
-## ÅäÖÃËµÃ÷
+## é…ç½®è¯´æ˜
 
-* **Config Server** Ä¬ÈÏÊ¹ÓÃ **native** Ä£Ê½£¬±¾µØ¶ÁÈ¡ `classpath:/config` Ä¿Â¼ÏÂµÄÅäÖÃÎÄ¼ş¡£
-* ËùÓĞ¿Í»§¶Ë·şÎñÆô¶¯Ê±£¬»áÇëÇó Config Server µÄ URL£º`http://localhost:8888/application/default`
+* **Config Server** é»˜è®¤ä½¿ç”¨ **native** æ¨¡å¼ï¼Œæœ¬åœ°è¯»å– `classpath:/config` ç›®å½•ä¸‹çš„é…ç½®æ–‡ä»¶ã€‚
+* æ‰€æœ‰å®¢æˆ·ç«¯æœåŠ¡å¯åŠ¨æ—¶ï¼Œä¼šè¯·æ±‚ Config Server çš„ URLï¼š`http://localhost:8888/application/default`
 
 ---
 
-## ÒÀÀµ°æ±¾
+## ä¾èµ–ç‰ˆæœ¬
 
-| ×é¼ş            | °æ±¾       | ±¸×¢ |
+| ç»„ä»¶            | ç‰ˆæœ¬       | å¤‡æ³¨ |
 |:--------------|:---------| :--- |
-| Java Versio   | JDK 17   | ³¤ÆÚÖ§³Ö°æ±¾ (LTS) |
+| Java Versio   | JDK 17   | é•¿æœŸæ”¯æŒç‰ˆæœ¬ (LTS) |
 | Spring Boot   | 3.3.6    | |
 | Spring Cloud  | 2023.0.4 | |
 | Resilience4j  | 2.1.0    | |
 | ElasticSearch | 8.12.2   | |
- | MySQL         | 8.0      | |
+| MySQL         | 8.0      | |
 
 ---
 
-## ²Î¿¼×ÊÁÏ
+## å‚è€ƒèµ„æ–™
 
-* [Spring Cloud Config ¹Ù·½ÎÄµµ](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/)
-* [Resilience4j ¹Ù·½ÎÄµµ](https://resilience4j.readme.io/)
-* [Spring Cloud OpenFeign ¹Ù·½ÎÄµµ](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/)
+* [Spring Cloud Config å®˜æ–¹æ–‡æ¡£](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/)
+* [Resilience4j å®˜æ–¹æ–‡æ¡£](https://resilience4j.readme.io/)
+* [Spring Cloud OpenFeign å®˜æ–¹æ–‡æ¡£](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/)
 
-## ÆäËû
+## å…¶ä»–
 
-* Ğ´ÄÚÈİ
+* å†™å†…å®¹
 ```bash
   curl -X POST "http://localhost:8081/status/create" \
   -H "Content-Type: application/json" \
   -d '{
   "userId": 4,
-  "title": "ÎÒµÄµÚ¶şÌõ×´Ì¬",
-  "content": "Hello£¬²âÊÔÒ»ÏÂKafka"
+  "title": "æˆ‘çš„ç¬¬äºŒæ¡çŠ¶æ€",
+  "content": "Helloï¼Œæµ‹è¯•ä¸€ä¸‹Kafka"
   }'
 ```  
-* ´´½¨topic
+
+* æŸ¥è¯¢
+```bash
+  curl -X POST \
+  http://localhost:8082/status/search \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "query": "ç™¾æµç¥å·"
+  }'
+```
+
+* åˆ›å»ºtopic
 ```bash
   docker exec kafka \
   kafka-topics --create \
